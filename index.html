@@ -896,6 +896,37 @@ a{
   transform:translateY(1px);
 }
 
+
+/* ===== トップへ戻るボタン ===== */
+.back-to-top{
+  position:fixed;
+  right:18px;
+  bottom:22px;
+  width:48px;
+  height:48px;
+  border:0;
+  border-radius:50%;
+  background:#d9efff;
+  color:#1769aa;
+  box-shadow:0 3px 12px rgba(0,0,0,.16);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  line-height:1;
+  cursor:pointer;
+  z-index:40;
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(8px);
+  transition:opacity .2s ease, transform .2s ease, visibility .2s;
+}
+.back-to-top.show{
+  opacity:.92;
+  visibility:visible;
+  transform:translateY(0);
+}
+
 </style>
 </head>
 
@@ -1513,7 +1544,23 @@ document.addEventListener('keydown', function(e){
 });
 </script>
 
+
+<button class="back-to-top" id="backToTop" type="button"
+        aria-label="ページの先頭へ戻る"
+        onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</button>
+
+
+<script>
+(function(){
+  const btn = document.getElementById('backToTop');
+  if(!btn) return;
+  function updateBackToTop(){
+    btn.classList.toggle('show', window.scrollY > 420);
+  }
+  window.addEventListener('scroll', updateBackToTop, {passive:true});
+  updateBackToTop();
+})();
+</script>
+
 </body>
 </html>
-懇親会だより_ハンバーガーメニュー稼働版.html
-HTML
