@@ -76,8 +76,51 @@ a{
 }
 
 .menu{
+  border:0;
+  background:transparent;
+  padding:4px 2px;
+  font:inherit;
   font-size:28px;
+  line-height:1;
   color:#222;
+  cursor:pointer;
+}
+
+.main-menu-panel{
+  position:fixed;
+  top:64px;
+  right:12px;
+  width:min(300px, calc(100vw - 24px));
+  background:#fff;
+  border:1px solid #e4e9ef;
+  border-radius:14px;
+  box-shadow:0 12px 30px rgba(0,0,0,.14);
+  z-index:30;
+  padding:8px;
+  opacity:0;
+  transform:translateY(-8px) scale(.98);
+  pointer-events:none;
+  transition:opacity .16s ease, transform .16s ease;
+}
+
+.main-menu-panel.open{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+
+.main-menu-panel a{
+  display:block;
+  padding:12px 13px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:700;
+  color:#17477d;
+}
+
+.main-menu-panel a:hover,
+.main-menu-panel a:active{
+  background:#f2f6fb;
 }
 
 /* ===== ヒーロー ===== */
@@ -111,23 +154,45 @@ a{
   font-weight:500;
 }
 
-/* ===== ドット ===== */
-.dots{
-  text-align:center;
+/* ===== スライド風ナビ ===== */
+.slider-nav{
+  max-width:620px;
+  margin:0 auto;
+  padding:9px 14px 5px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
   background:#fff;
-  padding:10px 0 18px;
 }
-
-.dot{
-  display:inline-block;
+.slider-arrow{
+  border:0;
+  background:transparent;
+  color:#718096;
+  font-size:25px;
+  line-height:1;
+  padding:0 5px 3px;
+  cursor:pointer;
+}
+.slider-dots{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+.slider-dot{
   width:8px;
   height:8px;
-  background:#d4d8df;
+  padding:0;
+  border:0;
   border-radius:50%;
-  margin:0 4px;
+  background:#d4d9df;
+  cursor:pointer;
 }
-
-.dot.active{background:#0b63c7;}
+.slider-dot.active{
+  width:9px;
+  height:9px;
+  background:#315f8f;
+}
 
 /* ===== 全体 ===== */
 .container{
@@ -844,8 +909,17 @@ a{
       <div class="logo-sub">公式ホームページ</div>
     </div>
   </div>
-  <div class="menu">☰</div>
+  <button class="menu" type="button" onclick="toggleMainMenu()" aria-label="メニューを開く" aria-expanded="false">☰</button>
 </header>
+<div class="main-menu-panel" id="mainMenuPanel" aria-hidden="true">
+  <a href="#meeting18" onclick="closeMainMenu()">📢 議事録・特別なお知らせ</a>
+  <a href="#boat-info" onclick="closeMainMenu()">🚢 屋形船 当日のご案内</a>
+  <a href="#refund-info" onclick="closeMainMenu()">💰 旅行積立金 返金案内</a>
+  <a href="#tokyo-calendar" onclick="closeMainMenu()">📅 東京カレンダー</a>
+  <a href="#archive-section" onclick="closeMainMenu()">🗂 重要アーカイブ</a>
+  <a href="#help-section" onclick="closeMainMenu()">🆘 困ったとき</a>
+</div>
+
 
 <section class="hero">
   <div>
@@ -855,11 +929,15 @@ a{
   </div>
 </section>
 
-<div class="dots">
-  <span class="dot active"></span>
-  <span class="dot"></span>
-  <span class="dot"></span>
-</div>
+<nav class="slider-nav" aria-label="主要メニュー">
+  <button class="slider-arrow" type="button" onclick="moveTopNav(-1)" aria-label="前へ">‹</button>
+  <div class="slider-dots">
+    <button class="slider-dot active" type="button" data-target="tokyo-calendar" onclick="goTopNav(0)" aria-label="東京カレンダー"></button>
+    <button class="slider-dot" type="button" data-target="boat-info" onclick="goTopNav(1)" aria-label="屋形船"></button>
+    <button class="slider-dot" type="button" data-target="meeting18" onclick="goTopNav(2)" aria-label="議事録・特別なお知らせ"></button>
+  </div>
+  <button class="slider-arrow" type="button" onclick="moveTopNav(1)" aria-label="次へ">›</button>
+</nav>
 
 <main class="container">
 
@@ -1080,7 +1158,7 @@ a{
   </section>
 
   <!-- ===== 東京カレンダー ===== -->
-  <div class="section-head">
+  <div class="section-head" id="tokyo-calendar">
     <div class="section-title">
       <span class="material-icons">event</span>
       東京カレンダー
@@ -1235,7 +1313,7 @@ a{
 
   </div>
 <!-- ===== 重要アーカイブ ===== -->
-  <div class="section-head">
+  <div class="section-head" id="archive-section">
     <div class="section-title">
       <span class="material-icons">inventory_2</span>
       重要アーカイブ
@@ -1290,7 +1368,7 @@ a{
     </div>
   </section>
   <!-- ===== 困ったとき ===== -->
-  <section class="card help-card">
+  <section class="card help-card" id="help-section">
     <div class="help-title">困ったときは</div>
     <p>
       🚨 トラブル即対応（まず確認）<br>
@@ -1301,7 +1379,7 @@ a{
     </p>
 
     <div class="sns-links">
-      <a href="https://line.me/" target="_blank" rel="noopener">
+      <a href="https://line.me/R/ti/p/@323rawxt" target="_blank" rel="noopener">
         <img src="https://cdn-icons-png.flaticon.com/512/2111/2111498.png" alt="LINE">
       </a>
 
@@ -1323,7 +1401,7 @@ a{
 
 
 <script>
-const refundRecords = [{"employeeNo": "133", "name": "端谷博史", "amount": 24000}, {"employeeNo": "136", "name": "塩野 明", "amount": 24000}, {"employeeNo": "166", "name": "永元正吾", "amount": 24000}, {"employeeNo": "213", "name": "加藤春義", "amount": 24000}, {"employeeNo": "332", "name": "吉本健次郎", "amount": 24000}, {"employeeNo": "387", "name": "栗原宏明", "amount": 24000}, {"employeeNo": "401", "name": "下国康二郎", "amount": 24000}, {"employeeNo": "418", "name": "山本金一", "amount": 24000}, {"employeeNo": "468", "name": "高村政衛", "amount": 24000}, {"employeeNo": "494", "name": "大塚吉昭", "amount": 24000}, {"employeeNo": "522", "name": "小岩 修", "amount": 24000}, {"employeeNo": "531", "name": "遠藤武彦", "amount": 24000}, {"employeeNo": "534", "name": "南部智昭", "amount": 24000}, {"employeeNo": "535", "name": "一花 肇", "amount": 24000}, {"employeeNo": "543", "name": "田島孝行", "amount": 24000}, {"employeeNo": "554", "name": "寺田勝", "amount": 24000}, {"employeeNo": "556", "name": "高見康義", "amount": 24000}, {"employeeNo": "564", "name": "坂口庄二", "amount": 24000}, {"employeeNo": "577", "name": "須賀孝志", "amount": 24000}, {"employeeNo": "592", "name": "浅若圭克", "amount": 24000}, {"employeeNo": "603", "name": "大塚幸光", "amount": 24000}, {"employeeNo": "621", "name": "山崎陽平", "amount": 24000}, {"employeeNo": "635", "name": "齋藤光明", "amount": 24000}, {"employeeNo": "640", "name": "吉田勝義", "amount": 24000}, {"employeeNo": "660", "name": "伊藤新之助", "amount": 24000}, {"employeeNo": "661", "name": "中野雅春", "amount": 24000}, {"employeeNo": "662", "name": "岩堀武男", "amount": 24000}, {"employeeNo": "666", "name": "久木原博", "amount": 24000}, {"employeeNo": "671", "name": "山口 誠", "amount": 24000}, {"employeeNo": "675", "name": "香山浩司", "amount": 24000}, {"employeeNo": "679", "name": "林 芳弘", "amount": 24000}, {"employeeNo": "687", "name": "濱田紀文", "amount": 24000}, {"employeeNo": "691", "name": "高山一広", "amount": 24000}, {"employeeNo": "698", "name": "篠田大輔", "amount": 24000}, {"employeeNo": "708", "name": "釈永 優", "amount": 24000}, {"employeeNo": "709", "name": "富田篤司", "amount": 24000}, {"employeeNo": "715", "name": "冨髙正義", "amount": 24000}, {"employeeNo": "716", "name": "武井 勝", "amount": 24000}, {"employeeNo": "719", "name": "小林利則", "amount": 4000}, {"employeeNo": "720", "name": "大久保勉", "amount": 24000}, {"employeeNo": "728", "name": "小林信夫", "amount": 24000}, {"employeeNo": "730", "name": "小平正美", "amount": 24000}, {"employeeNo": "735", "name": "宮入芳高", "amount": 24000}, {"employeeNo": "742", "name": "杉山輝行", "amount": 24000}, {"employeeNo": "743", "name": "澤 啓司", "amount": 24000}, {"employeeNo": "752", "name": "西川友博", "amount": 24000}, {"employeeNo": "753", "name": "新井 実", "amount": 24000}, {"employeeNo": "755", "name": "浅川芳行", "amount": 24000}, {"employeeNo": "766", "name": "山本 勲", "amount": 24000}, {"employeeNo": "770", "name": "小池利生", "amount": 24000}, {"employeeNo": "772", "name": "鳥山勝吉", "amount": 24000}, {"employeeNo": "785", "name": "坂本将樹", "amount": 24000}, {"employeeNo": "789", "name": "赤石明幸", "amount": 14000}, {"employeeNo": "796", "name": "岡村 聡", "amount": 24000}, {"employeeNo": "799", "name": "的場良介", "amount": 24000}, {"employeeNo": "801", "name": "林 正美", "amount": 24000}, {"employeeNo": "802", "name": "大宮研司", "amount": 24000}, {"employeeNo": "814", "name": "上松勝巳", "amount": 24000}, {"employeeNo": "826", "name": "山本秋信", "amount": 24000}, {"employeeNo": "827", "name": "佐々木 優", "amount": 24000}, {"employeeNo": "839", "name": "横山龍太郎", "amount": 24000}, {"employeeNo": "843", "name": "吉澤颯太", "amount": 24000}, {"employeeNo": "844", "name": "若井力", "amount": 24000}, {"employeeNo": "846", "name": "鷲見俊樹", "amount": 24000}, {"employeeNo": "848", "name": "樋口貴行", "amount": 24000}, {"employeeNo": "851", "name": "山田俊輝", "amount": 24000}, {"employeeNo": "852", "name": "下山武志", "amount": 24000}, {"employeeNo": "853", "name": "山口真貴子", "amount": 24000}, {"employeeNo": "855", "name": "大江賢生", "amount": 24000}, {"employeeNo": "859", "name": "南 陽也", "amount": 24000}, {"employeeNo": "860", "name": "松田雄介", "amount": 24000}, {"employeeNo": "861", "name": "古城洋平", "amount": 24000}, {"employeeNo": "862", "name": "谷俊弘", "amount": 24000}, {"employeeNo": "863", "name": "戸島和美", "amount": 24000}, {"employeeNo": "865", "name": "菊池一明", "amount": 24000}, {"employeeNo": "866", "name": "村田陽子", "amount": 24000}, {"employeeNo": "867", "name": "杉本幸二", "amount": 24000}, {"employeeNo": "872", "name": "小野寺亘", "amount": 24000}, {"employeeNo": "873", "name": "奥寺 平", "amount": 24000}, {"employeeNo": "878", "name": "小松 誠", "amount": 24000}, {"employeeNo": "882", "name": "渡邊隆浩", "amount": 24000}, {"employeeNo": "884", "name": "島田智幸", "amount": 24000}, {"employeeNo": "885", "name": "松岡裕佑", "amount": 24000}, {"employeeNo": "886", "name": "杉本和教", "amount": 24000}, {"employeeNo": "889", "name": "木村宗春", "amount": 24000}, {"employeeNo": "891", "name": "本波和樹", "amount": 24000}, {"employeeNo": "892", "name": "濱井和也", "amount": 24000}, {"employeeNo": "893", "name": "玄番小次郎", "amount": 24000}, {"employeeNo": "896", "name": "小島英弘", "amount": 24000}, {"employeeNo": "897", "name": "京極 翼", "amount": 24000}, {"employeeNo": "898", "name": "木村広", "amount": 24000}, {"employeeNo": "899", "name": "門川 樹", "amount": 24000}, {"employeeNo": "903", "name": "會田里未", "amount": 24000}, {"employeeNo": "905", "name": "岸野和哉", "amount": 24000}, {"employeeNo": "906", "name": "服部琴音", "amount": 24000}, {"employeeNo": "908", "name": "大谷苑子", "amount": 24000}, {"employeeNo": "910", "name": "水上雅人", "amount": 24000}, {"employeeNo": "911", "name": "柳澤克則", "amount": 24000}, {"employeeNo": "916", "name": "望月崇史", "amount": 24000}, {"employeeNo": "917", "name": "内田洋平", "amount": 24000}, {"employeeNo": "919", "name": "春日高政", "amount": 24000}, {"employeeNo": "920", "name": "浅賀孝義", "amount": 24000}, {"employeeNo": "921", "name": "金井知己", "amount": 14000}, {"employeeNo": "922", "name": "神保勇樹", "amount": 24000}, {"employeeNo": "923", "name": "霜山茶乙", "amount": 24000}, {"employeeNo": "926", "name": "安富徳義", "amount": 22000}, {"employeeNo": "929", "name": "七五三掛勉", "amount": 24000}, {"employeeNo": "931", "name": "久保田怜那", "amount": 22000}, {"employeeNo": "933", "name": "鏑木 靖", "amount": 22000}, {"employeeNo": "934", "name": "邑松 賢", "amount": 22000}, {"employeeNo": "935", "name": "帯川晶彦", "amount": 20000}, {"employeeNo": "936", "name": "下畑信貴", "amount": 14000}, {"employeeNo": "937", "name": "波多野拓也", "amount": 6000}, {"employeeNo": "938", "name": "石田竜也", "amount": 14000}, {"employeeNo": "939", "name": "赤間あみ", "amount": 14000}, {"employeeNo": "941", "name": "蘇 勒徳", "amount": 14000}, {"employeeNo": "943", "name": "林 昭男", "amount": 14000}, {"employeeNo": "944", "name": "久我昌弘", "amount": 8000}, {"employeeNo": "945", "name": "野口明日香", "amount": 6000}, {"employeeNo": "947", "name": "川島秀章", "amount": 6000}, {"employeeNo": "948", "name": "木村雄太", "amount": 14000}, {"employeeNo": "949", "name": "阿多川智宏", "amount": 14000}, {"employeeNo": "950", "name": "田口峻也", "amount": 0}, {"employeeNo": "951", "name": "橋本紘志", "amount": 0}, {"employeeNo": "952", "name": "下山 明", "amount": 12000}, {"employeeNo": "953", "name": "鈴木和政", "amount": 12000}, {"employeeNo": "954", "name": "鈴木明日美", "amount": 12000}, {"employeeNo": "955", "name": "吉原慎吾", "amount": 12000}, {"employeeNo": "956", "name": "瀬川忠弘", "amount": 12000}, {"employeeNo": "957", "name": "千須和 拓", "amount": 8000}, {"employeeNo": "958", "name": "三原誉也", "amount": 12000}, {"employeeNo": "959", "name": "今井研作", "amount": 12000}, {"employeeNo": "960", "name": "彼ノ矢美香", "amount": 8000}, {"employeeNo": "961", "name": "三改木翔眞", "amount": 8000}, {"employeeNo": "962", "name": "五十嵐裕紀", "amount": 8000}, {"employeeNo": "963", "name": "木村日向", "amount": 8000}, {"employeeNo": "964", "name": "人見雅子", "amount": 8000}, {"employeeNo": "965", "name": "鈴木麗央", "amount": 8000}, {"employeeNo": "966", "name": "長嶺誠洋", "amount": 8000}, {"employeeNo": "967", "name": "宮脇日向", "amount": 8000}, {"employeeNo": "968", "name": "内山 浩", "amount": 6000}, {"employeeNo": "969", "name": "古市真介", "amount": 6000}, {"employeeNo": "970", "name": "中野謄也", "amount": 6000}, {"employeeNo": "971", "name": "高橋博之", "amount": 6000}, {"employeeNo": "972", "name": "阿部一輝", "amount": 6000}, {"employeeNo": "973", "name": "国枝 航", "amount": 0}, {"employeeNo": "974", "name": "坂本龍哉", "amount": 0}, {"employeeNo": "975", "name": "清野絢太", "amount": 0}, {"employeeNo": "976", "name": "水越夏美", "amount": 0}, {"employeeNo": "977", "name": "村田悦正", "amount": 0}, {"employeeNo": "978", "name": "小池貴士", "amount": 0}, {"employeeNo": "979", "name": "米川和行", "amount": 0}, {"employeeNo": "980", "name": "池田義典", "amount": 0}, {"employeeNo": "981", "name": "村田真也", "amount": 0}, {"employeeNo": "982", "name": "山内一真", "amount": 0}, {"employeeNo": "983", "name": "坂寄竜治", "amount": 0}, {"employeeNo": "984", "name": "松岡璃空", "amount": 0}, {"employeeNo": "985", "name": "渡辺一樹", "amount": 0}, {"employeeNo": "986", "name": "藤倉雷也", "amount": 0}, {"employeeNo": "987", "name": "山口璃音", "amount": 0}, {"employeeNo": "988", "name": "安井力也", "amount": 0}, {"employeeNo": "989", "name": "田尾祐作", "amount": 0}, {"employeeNo": "990", "name": "星野翠騎", "amount": 0}, {"employeeNo": "991", "name": "新藤 泰成", "amount": 0}, {"employeeNo": "992", "name": "鈴木龍斗", "amount": 0}, {"employeeNo": "993", "name": "立花璃乙花", "amount": 0}, {"employeeNo": "994", "name": "吉田 健二", "amount": 0}, {"employeeNo": "995", "name": "大須賀嵩史", "amount": 0}, {"employeeNo": "996", "name": "古橋直也", "amount": 0}, {"employeeNo": "997", "name": "石川隼人", "amount": 0}, {"employeeNo": "998", "name": "南昴之進", "amount": 0}];
+const refundRecords = [{"employeeNo": "133", "name": "端谷博史", "amount": 24000}, {"employeeNo": "136", "name": "塩野 明", "amount": 24000}, {"employeeNo": "166", "name": "永元正吾", "amount": 24000}, {"employeeNo": "213", "name": "加藤春義", "amount": 24000}, {"employeeNo": "332", "name": "吉本健次郎", "amount": 24000}, {"employeeNo": "387", "name": "栗原宏明", "amount": 24000}, {"employeeNo": "401", "name": "下国康二郎", "amount": 24000}, {"employeeNo": "418", "name": "山本金一", "amount": 24000}, {"employeeNo": "468", "name": "高村政衛", "amount": 24000}, {"employeeNo": "494", "name": "大塚吉昭", "amount": 24000}, {"employeeNo": "522", "name": "小岩 修", "amount": 24000}, {"employeeNo": "531", "name": "遠藤武彦", "amount": 24000}, {"employeeNo": "534", "name": "南部智昭", "amount": 24000}, {"employeeNo": "535", "name": "一花 肇", "amount": 24000}, {"employeeNo": "543", "name": "田島孝行", "amount": 24000}, {"employeeNo": "554", "name": "寺田勝", "amount": 24000}, {"employeeNo": "556", "name": "高見康義", "amount": 24000}, {"employeeNo": "564", "name": "坂口庄二", "amount": 24000}, {"employeeNo": "577", "name": "須賀孝志", "amount": 24000}, {"employeeNo": "592", "name": "浅若圭克", "amount": 24000}, {"employeeNo": "603", "name": "大塚幸光", "amount": 24000}, {"employeeNo": "621", "name": "山崎陽平", "amount": 24000}, {"employeeNo": "635", "name": "齋藤光明", "amount": 24000}, {"employeeNo": "640", "name": "吉田勝義", "amount": 24000}, {"employeeNo": "660", "name": "伊藤新之助", "amount": 24000}, {"employeeNo": "661", "name": "中野雅春", "amount": 24000}, {"employeeNo": "662", "name": "岩堀武男", "amount": 24000}, {"employeeNo": "666", "name": "久木原博", "amount": 24000}, {"employeeNo": "671", "name": "山口 誠", "amount": 24000}, {"employeeNo": "675", "name": "香山浩司", "amount": 24000}, {"employeeNo": "679", "name": "林 芳弘", "amount": 24000}, {"employeeNo": "687", "name": "濱田紀文", "amount": 24000}, {"employeeNo": "691", "name": "高山一広", "amount": 24000}, {"employeeNo": "698", "name": "篠田大輔", "amount": 24000}, {"employeeNo": "708", "name": "釈永 優", "amount": 24000}, {"employeeNo": "709", "name": "富田篤司", "amount": 24000}, {"employeeNo": "715", "name": "冨髙正義", "amount": 24000}, {"employeeNo": "716", "name": "武井 勝", "amount": 24000}, {"employeeNo": "719", "name": "小林利則", "amount": 4000}, {"employeeNo": "720", "name": "大久保勉", "amount": 24000}, {"employeeNo": "728", "name": "小林信夫", "amount": 24000}, {"employeeNo": "730", "name": "小平正美", "amount": 24000}, {"employeeNo": "735", "name": "宮入芳高", "amount": 24000}, {"employeeNo": "742", "name": "杉山輝行", "amount": 24000}, {"employeeNo": "743", "name": "澤 啓司", "amount": 24000}, {"employeeNo": "752", "name": "西川友博", "amount": 24000}, {"employeeNo": "753", "name": "新井 実", "amount": 24000}, {"employeeNo": "755", "name": "浅川芳行", "amount": 24000}, {"employeeNo": "766", "name": "山本 勲", "amount": 24000}, {"employeeNo": "770", "name": "小池利生", "amount": 24000}, {"employeeNo": "772", "name": "鳥山勝吉", "amount": 24000}, {"employeeNo": "785", "name": "坂本将樹", "amount": 24000}, {"employeeNo": "789", "name": "赤石明幸", "amount": 14000}, {"employeeNo": "796", "name": "岡村 聡", "amount": 24000}, {"employeeNo": "799", "name": "的場良介", "amount": 24000}, {"employeeNo": "801", "name": "林 正美", "amount": 24000}, {"employeeNo": "802", "name": "大宮研司", "amount": 24000}, {"employeeNo": "814", "name": "上松勝巳", "amount": 24000}, {"employeeNo": "826", "name": "山本秋信", "amount": 24000}, {"employeeNo": "827", "name": "佐々木 優", "amount": 24000}, {"employeeNo": "839", "name": "横山龍太郎", "amount": 24000}, {"employeeNo": "843", "name": "吉澤颯太", "amount": 24000}, {"employeeNo": "844", "name": "若井力", "amount": 24000}, {"employeeNo": "846", "name": "鷲見俊樹", "amount": 24000}, {"employeeNo": "848", "name": "樋口貴行", "amount": 24000}, {"employeeNo": "851", "name": "山田俊輝", "amount": 24000}, {"employeeNo": "852", "name": "下山武志", "amount": 24000}, {"employeeNo": "853", "name": "山口真貴子", "amount": 24000}, {"employeeNo": "855", "name": "大江賢生", "amount": 24000}, {"employeeNo": "859", "name": "南 陽也", "amount": 24000}, {"employeeNo": "860", "name": "松田雄介", "amount": 24000}, {"employeeNo": "861", "name": "古城洋平", "amount": 24000}, {"employeeNo": "862", "name": "谷俊弘", "amount": 24000}, {"employeeNo": "863", "name": "戸島和美", "amount": 24000}, {"employeeNo": "865", "name": "菊池一明", "amount": 24000}, {"employeeNo": "866", "name": "村田陽子", "amount": 24000}, {"employeeNo": "867", "name": "杉本幸二", "amount": 24000}, {"employeeNo": "872", "name": "小野寺亘", "amount": 24000}, {"employeeNo": "873", "name": "奥寺 平", "amount": 24000}, {"employeeNo": "878", "name": "小松 誠", "amount": 24000}, {"employeeNo": "882", "name": "渡邊隆浩", "amount": 24000}, {"employeeNo": "884", "name": "島田智幸", "amount": 24000}, {"employeeNo": "885", "name": "松岡裕佑", "amount": 24000}, {"employeeNo": "886", "name": "杉本和教", "amount": 24000}, {"employeeNo": "889", "name": "木村宗春", "amount": 24000}, {"employeeNo": "891", "name": "本波和樹", "amount": 24000}, {"employeeNo": "892", "name": "濱井和也", "amount": 24000}, {"employeeNo": "893", "name": "玄番小次郎", "amount": 24000}, {"employeeNo": "896", "name": "小島英弘", "amount": 24000}, {"employeeNo": "897", "name": "京極 翼", "amount": 24000}, {"employeeNo": "898", "name": "木村広", "amount": 24000}, {"employeeNo": "899", "name": "門川 樹", "amount": 24000}, {"employeeNo": "903", "name": "會田里未", "amount": 24000}, {"employeeNo": "905", "name": "岸野和哉", "amount": 24000}, {"employeeNo": "906", "name": "服部琴音", "amount": 24000}, {"employeeNo": "908", "name": "大谷苑子", "amount": 24000}, {"employeeNo": "910", "name": "水上雅人", "amount": 24000}, {"employeeNo": "911", "name": "柳澤克則", "amount": 24000}, {"employeeNo": "916", "name": "望月崇史", "amount": 24000}, {"employeeNo": "917", "name": "内田洋平", "amount": 24000}, {"employeeNo": "919", "name": "春日高政", "amount": 24000}, {"employeeNo": "920", "name": "浅賀孝義", "amount": 24000}, {"employeeNo": "921", "name": "金井知己", "amount": 14000}, {"employeeNo": "922", "name": "神保勇樹", "amount": 24000}, {"employeeNo": "923", "name": "霜山茶乙", "amount": 24000}, {"employeeNo": "926", "name": "安富徳義", "amount": 22000}, {"employeeNo": "929", "name": "七五三掛勉", "amount": 24000}, {"employeeNo": "931", "name": "久保田怜那", "amount": 22000}, {"employeeNo": "933", "name": "鏑木 靖", "amount": 22000}, {"employeeNo": "934", "name": "邑松 賢", "amount": 22000}, {"employeeNo": "935", "name": "帯川晶彦", "amount": 20000}, {"employeeNo": "936", "name": "下畑信貴", "amount": 14000}, {"employeeNo": "937", "name": "波多野拓也", "amount": 6000}, {"employeeNo": "938", "name": "石田竜也", "amount": 14000}, {"employeeNo": "939", "name": "赤間あみ", "amount": 14000}, {"employeeNo": "941", "name": "蘇 勒徳", "amount": 14000}, {"employeeNo": "943", "name": "林 昭男", "amount": 14000}, {"employeeNo": "944", "name": "久我昌弘", "amount": 8000}, {"employeeNo": "945", "name": "野口明日香", "amount": 6000}, {"employeeNo": "947", "name": "川島秀章", "amount": 6000}, {"employeeNo": "948", "name": "木村雄太", "amount": 14000}, {"employeeNo": "949", "name": "阿多川智宏", "amount": 14000}, {"employeeNo": "950", "name": "田口峻也", "amount": 0}, {"employeeNo": "951", "name": "橋本紘志", "amount": 0}, {"employeeNo": "952", "name": "下山 明", "amount": 12000}, {"employeeNo": "953", "name": "鈴木和政", "amount": 12000}, {"employeeNo": "954", "name": "鈴木明日美", "amount": 12000}, {"employeeNo": "955", "name": "吉原慎吾", "amount": 12000}, {"employeeNo": "956", "name": "瀬川忠弘", "amount": 12000}, {"employeeNo": "957", "name": "千須和 拓", "amount": 8000}, {"employeeNo": "958", "name": "三原誉也", "amount": 12000}, {"employeeNo": "959", "name": "今井研作", "amount": 12000}, {"employeeNo": "960", "name": "彼ノ矢美香", "amount": 8000}, {"employeeNo": "961", "name": "三改木翔眞", "amount": 8000}, {"employeeNo": "962", "name": "五十嵐裕紀", "amount": 8000}, {"employeeNo": "963", "name": "木村日向", "amount": 8000}, {"employeeNo": "964", "name": "人見雅子", "amount": 8000}, {"employeeNo": "965", "name": "鈴木麗央", "amount": 8000}, {"employeeNo": "966", "name": "長嶺誠洋", "amount": 8000}, {"employeeNo": "967", "name": "宮脇日向", "amount": 8000}, {"employeeNo": "968", "name": "内山 浩", "amount": 6000}, {"employeeNo": "969", "name": "古市真介", "amount": 6000}, {"employeeNo": "970", "name": "中野謄也", "amount": 6000}, {"employeeNo": "971", "name": "高橋博之", "amount": 6000}, {"employeeNo": "972", "name": "阿部一輝", "amount": 6000}, {"employeeNo": "973", "name": "国枝 航", "amount": 0}, {"employeeNo": "974", "name": "坂本龍哉", "amount": 0}, {"employeeNo": "975", "name": "清野絢太", "amount": 0}, {"employeeNo": "976", "name": "水越夏美", "amount": 0}, {"employeeNo": "977", "name": "村田悦正", "amount": 0}, {"employeeNo": "978", "name": "小池貴士", "amount": 0}, {"employeeNo": "979", "name": "米川和行", "amount": 0}, {"employeeNo": "980", "name": "池田義典", "amount": 0}, {"employeeNo": "981", "name": "村田真也", "amount": 0}, {"employeeNo": "982", "name": "山内一真", "amount": 0}, {"employeeNo": "983", "name": "坂寄竜治", "amount": 0}, {"employeeNo": "984", "name": "松岡璃空", "amount": 0}, {"employeeNo": "985", "name": "渡辺一樹", "amount": 0}, {"employeeNo": "986", "name": "藤倉雷也", "amount": 0}, {"employeeNo": "987", "name": "山口璃音", "amount": 0}, {"employeeNo": "988", "name": "安井力也", "amount": 0}, {"employeeNo": "989", "name": "田尾祐作", "amount": 0}, {"employeeNo": "990", "name": "星野翠騎", "amount": 0}, {"employeeNo": "991", "name": "新藤 泰成", "amount": 0}, {"employeeNo": "992", "name": "鈴木龍斗", "amount": 0}, {"employeeNo": "993", "name": "立花璃乙花", "amount": 0}, {"employeeNo": "994", "name": "吉田 健二", "amount": 0}, {"employeeNo": "995", "name": "大須賀嵩史", "amount": 0}, {"employeeNo": "996", "name": "古橋直也", "amount": 0}, {"employeeNo": "997", "name": "石川隼人", "amount": 0}, {"employeeNo": "998", "name": "南昴之進", "amount": 0}, {"employeeNo": "999", "name": "谷崎 秀幸", "amount": 0}, {"employeeNo": "1000", "name": "江口祥太", "amount": 0}, {"employeeNo": "1001", "name": "吉池雄樹", "amount": 0}, {"employeeNo": "1002", "name": "霜山丈二", "amount": 0}, {"employeeNo": "1003", "name": "花島紘月", "amount": 0}];
 const refundMap = new Map(refundRecords.map(r => [String(r.employeeNo).trim(), r]));
 
 function toggleRefund(){
@@ -1379,5 +1457,63 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 
+
+<script>
+let topNavIndex = 0;
+const topNavTargets = ['tokyo-calendar','boat-info','meeting18'];
+
+function setTopNav(index){
+  topNavIndex = (index + topNavTargets.length) % topNavTargets.length;
+  document.querySelectorAll('.slider-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === topNavIndex);
+  });
+}
+function goTopNav(index){
+  setTopNav(index);
+  const el = document.getElementById(topNavTargets[topNavIndex]);
+  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function moveTopNav(step){
+  setTopNav(topNavIndex + step);
+  const el = document.getElementById(topNavTargets[topNavIndex]);
+  if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+</script>
+
+
+<script>
+function toggleMainMenu(){
+  const panel = document.getElementById('mainMenuPanel');
+  const button = document.querySelector('.menu');
+  const isOpen = panel.classList.toggle('open');
+  panel.setAttribute('aria-hidden', String(!isOpen));
+  button.setAttribute('aria-expanded', String(isOpen));
+}
+
+function closeMainMenu(){
+  const panel = document.getElementById('mainMenuPanel');
+  const button = document.querySelector('.menu');
+  if(!panel || !button) return;
+  panel.classList.remove('open');
+  panel.setAttribute('aria-hidden', 'true');
+  button.setAttribute('aria-expanded', 'false');
+}
+
+document.addEventListener('click', function(e){
+  const panel = document.getElementById('mainMenuPanel');
+  const button = document.querySelector('.menu');
+  if(!panel || !button) return;
+  if(panel.classList.contains('open') && !panel.contains(e.target) && !button.contains(e.target)){
+    closeMainMenu();
+  }
+});
+
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeMainMenu();
+});
+</script>
+
 </body>
 </html>
+懇親会だより_ハンバーガーメニュー稼働版.html
+HTML
